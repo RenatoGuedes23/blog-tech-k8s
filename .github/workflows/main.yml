@@ -35,7 +35,7 @@ jobs:
         uses: azure/setup-kubectl@v3 # Instala ou garante que o kubectl está disponível
 
       - name: Configure kubeconfig for EKS
-        uses: aws-actions/amazon-eks-setup@v2 # Configura o kubeconfig para o seu cluster EKS
+        uses: aws-actions/amazon-eks-setup@v3 # Configura o kubeconfig para o seu cluster EKS
         with:
           cluster-name: opm-prod # <-- ATENÇÃO: SUBSTITUA PELO NOME DO SEU CLUSTER EKS!
           aws-region: ${{ env.AWS_REGION }}
