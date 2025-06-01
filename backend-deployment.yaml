@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: backend
+  name: blog-tech-backend
   labels:
     app: blog
-    tier: backend
+    tier: blog-tech-backend
 spec:
   selector:
     app: blog
-    tier: backend
+    tier: blog-tech-backend
   ports:
     - protocol: TCP
       port: 8000
@@ -18,24 +18,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-deployment
+  name: blog-tech-backend
   labels:
     app: blog
-    tier: backend
+    tier: blog-tech-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: blog
-      tier: backend
+      tier: blog-tech-backend
   template:
     metadata:
       labels:
         app: blog
-        tier: backend
+        tier: blog-tech-backend
     spec:
       containers:
-        - name: blog-backend
+        - name: blog-tech-backend
           image: 776060341642.dkr.ecr.us-east-1.amazonaws.com/blog-tech-backend:latest
           ports:
             - containerPort: 8000
