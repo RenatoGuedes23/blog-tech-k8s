@@ -1,3 +1,4 @@
+# .github/workflows/deploy_to_eks.yml
 name: Deploy to EKS Cluster
 
 on:
@@ -7,7 +8,7 @@ on:
   workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1
+  AWS_REGION: us-east-1 # Confirme que esta é a região do seu EKS
 
 jobs:
   deploy-to-eks:
@@ -15,27 +16,30 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
+      id-token: write # Essencial para o AWS OIDC e autenticação com EKS
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials using Access Keys
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4 # Configura as credenciais AWS
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Setup kubectl
-        uses: azure/setup-kubectl@v3
+      # --- ETAPAS DE DEPLOY PARA O KUBERNETES ---
 
-      - name: Authenticate to EKS cluster
-        uses: aws-actions/eks-auth@v1
-        with:
-          cluster-name: opm-prod
-          region: ${{ env.AWS_REGION }}
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3 # Instala ou garante que o kubectl está disponível
+
+      - name: Configure kubeconfig for EKS via AWS CLI
+        run: |
+          # O AWS CLI já está pré-instalado na maioria dos runners do GitHub Actions.
+          # Este comando configura o kubectl para se comunicar com o seu cluster EKS.
+          aws eks update-kubeconfig --region ${{ env.AWS_REGION }} --name opm-prod # <--- SUBSTITUA 'opm-prod' SE O NOME DO CLUSTER FOR OUTRO!
+          echo "✅ Kubeconfig configurado para o cluster opm-prod." # Mensagem de confirmação
 
       - name: Apply Kubernetes DB Deployment
         run: |
@@ -51,6 +55,6 @@ jobs:
 
       - name: Check Kubernetes Service Status
         run: |
-          echo "Status dos serviços Kubernetes:"
+          echo "🌐 Status dos serviços Kubernetes:"
           kubectl get svc backend db
-          echo "Deploy finalizado!"
+          echo "🚀 Deploy finalizado!"
