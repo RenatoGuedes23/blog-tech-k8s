@@ -29,8 +29,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Certifique-se que o nome do secret está correto
           aws-region: ${{ env.AWS_REGION }}
 
-      # --- ETAPAS DE DEPLOY PARA O KUBERNETES ---
-
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3 # Instala ou garante que o kubectl está disponível
 
