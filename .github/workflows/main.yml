@@ -48,9 +48,3 @@ jobs:
         run: |
           kubectl apply -f backend-deployment.yaml
           echo "✅ backend-deployment.yaml aplicado."
-
-      - name: Check Kubernetes Service Status
-        run: |
-          echo "🌐 Status dos serviços Kubernetes:"
-          kubectl get svc backend db
-          echo "🚀 Deploy finalizado!"
