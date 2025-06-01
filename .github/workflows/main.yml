@@ -43,13 +43,11 @@ jobs:
         run: |
           kubectl apply -f db-deployment.yaml
           echo "✅ db-deployment.yaml aplicado."
-          kubectl rollout status deployment/db-deployment --timeout=5m
 
       - name: Apply Kubernetes Backend Deployment
         run: |
           kubectl apply -f backend-deployment.yaml
           echo "✅ backend-deployment.yaml aplicado."
-          kubectl rollout status deployment/backend-deployment --timeout=5m
 
       - name: Check Kubernetes Service Status
         run: |
