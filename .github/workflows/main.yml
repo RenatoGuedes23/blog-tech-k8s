@@ -31,8 +31,8 @@ jobs:
       - name: Setup kubectl
         uses: azure/setup-kubectl@v3
 
-      - name: Configure kubeconfig for EKS
-        uses: aws-actions/eks-setup-kubectl@v1
+      - name: Authenticate to EKS cluster
+        uses: aws-actions/eks-auth@v1
         with:
           cluster-name: opm-prod
           region: ${{ env.AWS_REGION }}
