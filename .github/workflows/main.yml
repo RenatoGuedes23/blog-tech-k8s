@@ -1,58 +1,53 @@
-# .github/workflows/deploy_to_eks.yml
 name: Deploy to EKS Cluster
 
 on:
   push:
     branches:
-      - main # Dispara o workflow em pushes para a branch 'main' (ajuste se usar outra)
-  workflow_dispatch: # Permite disparar o workflow manualmente na interface do GitHub
+      - main
+  workflow_dispatch:
 
 env:
-  AWS_REGION: us-east-1 # Confirme que esta é a região do seu EKS
+  AWS_REGION: us-east-1
 
 jobs:
   deploy-to-eks:
     name: Apply Kubernetes Manifests
-    runs-on: ubuntu-latest # O runner que executará as ações
+    runs-on: ubuntu-latest
     permissions:
-      contents: read # Permissão padrão para checkout do código
-      id-token: write # Essencial para o AWS OIDC e autenticação com EKS
+      contents: read
+      id-token: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # Obtém o código do seu repositório (onde estão os YAMLs)
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials using Access Keys
-        uses: aws-actions/configure-aws-credentials@v4 # Configura as credenciais AWS
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} # Certifique-se que o nome do secret está correto
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Setup kubectl
-        uses: azure/setup-kubectl@v3 # Instala ou garante que o kubectl está disponível
+        uses: azure/setup-kubectl@v3
 
       - name: Configure kubeconfig for EKS
-        uses: aws-actions/amazon-eks-setup@v3 # Configura o kubeconfig para o seu cluster EKS
+        uses: aws-actions/eks-setup-kubectl@v1
         with:
-          cluster-name: opm-prod # <-- ATENÇÃO: SUBSTITUA PELO NOME DO SEU CLUSTER EKS!
-          aws-region: ${{ env.AWS_REGION }}
+          cluster-name: opm-prod
+          region: ${{ env.AWS_REGION }}
 
       - name: Apply Kubernetes DB Deployment
         run: |
-          # Assume que 'db-deployment.yaml' está na raiz do seu repositório.
-          # Se estiver em uma subpasta (ex: k8s/), ajuste para 'k8s/db-deployment.yaml'
           kubectl apply -f db-deployment.yaml
           echo "✅ db-deployment.yaml aplicado."
-          kubectl rollout status deployment/db-deployment --timeout=5m # Opcional: espera o deploy ficar pronto
+          kubectl rollout status deployment/db-deployment --timeout=5m
 
       - name: Apply Kubernetes Backend Deployment
         run: |
-          # Assume que 'backend-deployment.yaml' está na raiz do seu repositório.
-          # Se estiver em uma subpasta (ex: k8s/), ajuste para 'k8s/backend-deployment.yaml'
           kubectl apply -f backend-deployment.yaml
           echo "✅ backend-deployment.yaml aplicado."
-          kubectl rollout status deployment/backend-deployment --timeout=5m # Opcional: espera o deploy ficar pronto
+          kubectl rollout status deployment/backend-deployment --timeout=5m
 
       - name: Check Kubernetes Service Status
         run: |
