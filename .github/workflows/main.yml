@@ -51,6 +51,6 @@ jobs:
 
       - name: Check Kubernetes Service Status
         run: |
-          echo "🌐 Status dos serviços Kubernetes:"
+          echo "Status dos serviços Kubernetes:"
           kubectl get svc backend db
-          echo "🚀 Deploy finalizado!"
+          echo "Deploy finalizado!"
